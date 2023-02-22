@@ -4571,6 +4571,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@marlowe-sdk/dsl@workspace:packages/marlowe-dsl":
+  version: 0.0.0-use.local
+  resolution: "@marlowe-sdk/dsl@workspace:packages/marlowe-dsl"
+  dependencies:
+    "@cardano-sdk/util-dev": ^0.6.0
+    "@types/lodash": ^4.14.182
+    bignumber.js: ^9.0.0
+    eslint: ^7.32.0
+    jest: ^28.1.3
+    madge: ^5.0.1
+    npm-run-all: ^4.1.5
+    shx: ^0.3.3
+    ts-jest: ^28.0.7
+    typescript: ^4.7.4
+  languageName: unknown
+  linkType: soft
+
+"@marlowe-sdk/runtime-client@workspace:packages/marlowe-runtime-client":
+  version: 0.0.0-use.local
+  resolution: "@marlowe-sdk/runtime-client@workspace:packages/marlowe-runtime-client"
+  dependencies:
+    "@cardano-sdk/util-dev": ^0.6.0
+    "@sniptt/monads": ^0.5.10
+    "@types/lodash": ^4.14.182
+    axios: ^1.3.3
+    bignumber.js: ^9.0.0
+    eslint: ^7.32.0
+    fp-ts: ^2.13.1
+    jest: ^28.1.3
+    madge: ^5.0.1
+    npm-run-all: ^4.1.5
+    shx: ^0.3.3
+    ts-adt: ^2.0.2
+    ts-jest: ^28.0.7
+    ts-pattern: ^4.2.0
+    typescript: ^4.7.4
+  languageName: unknown
+  linkType: soft
+
 "@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1":
   version: 5.1.1-v1
   resolution: "@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1"
@@ -5759,6 +5798,13 @@ __metadata:
   dependencies:
     "@sinonjs/commons": ^1.7.0
   checksum: 7d3aef54e17c1073101cb64d953157c19d62a40e261a30923fa1ee337b049c5f29cc47b1f0c477880f42b5659848ba9ab897607ac8ea4acd5c30ddcfac57fca6
+  languageName: node
+  linkType: hard
+
+"@sniptt/monads@npm:^0.5.10":
+  version: 0.5.10
+  resolution: "@sniptt/monads@npm:0.5.10"
+  checksum: a176bd5c7f0333431803568848e602dcc1420efbdb5d48eb038c479b0f19a47da7b0bffc604605742878f02f255dee49542c053599381269c2e15b7a3905e434
   languageName: node
   linkType: hard
 
@@ -8631,6 +8677,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: f08ce214e957dfde45b837f8d3c7861424608fb7df32faa638835e338782a9f4c0b05074e92e0e8dcca3a1e6250112fbbe1b15a6b21104da633d84745bbb79cc
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.3.3":
+  version: 1.3.3
+  resolution: "axios@npm:1.3.3"
+  dependencies:
+    follow-redirects: ^1.15.0
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: b734a4bc348e2fa27150a7d4289d783fa405feb3f79f8daf28fd05813a12c8525ae9d3854aafe7ba041b005a4a751a0ba3b923331ceed41296ae14c7e54e2f26
   languageName: node
   linkType: hard
 
@@ -13378,6 +13435,13 @@ __metadata:
   version: 0.2.0
   resolution: "forwarded@npm:0.2.0"
   checksum: fd27e2394d8887ebd16a66ffc889dc983fbbd797d5d3f01087c020283c0f019a7d05ee85669383d8e0d216b116d720fc0cef2f6e9b7eb9f4c90c6e0bc7fd28e6
+  languageName: node
+  linkType: hard
+
+"fp-ts@npm:^2.13.1":
+  version: 2.13.1
+  resolution: "fp-ts@npm:2.13.1"
+  checksum: 618e0028aca9ff1d52b86f438499ccab149825bdab14c678d22c3e2ccbf9d36fd1f26d463bf0ae1e63f5cd79dd54c8218af2cca0daeea68b039307b751ae9563
   languageName: node
   linkType: hard
 
@@ -23707,6 +23771,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-adt@npm:^2.0.2":
+  version: 2.1.2
+  resolution: "ts-adt@npm:2.1.2"
+  checksum: c137cba73b215aa9c2d152fcceb0c25ee11dc718847ffec6297e2371c08b881e5ff59a0d200cb1f197941385e3827846477aafaac501cad80006a088404c51f0
+  languageName: node
+  linkType: hard
+
 "ts-custom-error@npm:^3.2.0":
   version: 3.2.2
   resolution: "ts-custom-error@npm:3.2.2"
@@ -23844,6 +23915,13 @@ __metadata:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: 356e2647b8b1e6ab00380c0537fa569b63bd9b6f006cc40fd650f81fae1817bd8fecc075300036950d8f45c1d85b95be33cd1e48a1a424a7d86c3dbb42bf60e5
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "ts-pattern@npm:4.2.0"
+  checksum: afa9448853b9763f535948f7cb46c71dd5b2850c71956f5c1b0756cc9beffbfa613e717d6af67b4b72fd048a6a77fbadf97f511e7c236649a209a5f224ed215e
   languageName: node
   linkType: hard
 
