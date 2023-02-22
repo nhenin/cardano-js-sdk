@@ -1,7 +1,7 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 /* eslint-disable no-use-before-define */
 import { AxiosInstance } from 'axios';
-import { ADT } from 'ts-adt';
+import { FetchResult, Metadata, failure, success } from '../model/common';
 
 // API responses brings us back URLs so we are encouraged to not construct them manually.
 // We use a opaque string to represent URLs for that.
@@ -17,7 +17,7 @@ declare const ContractEndpoint: unique symbol;
 // but we gonna extend the API and it gonna be served as a part of root response.
 export const contractsEndpoint = '/contracts' as ContractsEndpoint;
 
-type ContractEndpoint = string & { _opaque: typeof ContractEndpoint };
+export type ContractEndpoint = string & { _opaque: typeof ContractEndpoint };
 
 // We are cheating in here a bit by hardcoding URLs ;-)
 export const contractEndpoint = (contractId: string) => `/contracts/${contractId}` as ContractEndpoint;
@@ -40,8 +40,6 @@ type Bech32 = string;
 
 type Version = 'v1';
 
-type Metadata = Record<number, string>;
-
 // Just a stub for Marlowe Contract and State
 type Contract = 'close';
 type State = any;
@@ -54,15 +52,7 @@ export interface ErrorResponse {
   message: string;
 }
 
-export type Result<Error, Data> = ADT<{
-  success: { data: Data };
-  failure: { details: Error };
-}>;
-
-export const success: <Error, Data>(d: Data) => Result<Error, Data> = (d) => ({ _type: 'success', data: d });
-export const failure: <Error, Data>(e: Error) => Result<Error, Data> = (e) => ({ _type: 'failure', details: e });
-
-type TxOutRef = string;
+// Cardano
 type PolicyId = string;
 type TxStatus = 'unsigned' | 'submitted' | 'confirmed';
 
@@ -71,32 +61,45 @@ interface BlockHeader {
   blockNo: number;
   blockHeaderHash: string;
 }
+// Contracts
+type TxOutRef = string;
+type ContractId = TxOutRef;
 
-interface ContractHeader {
+export interface ContractHeaderLinked {
+  resource: ContractHeader;
+  links: { contract: ContractEndpoint };
+}
+export interface ContractHeader {
   contractId: TxOutRef;
   roleTokenMintingPolicyId: PolicyId;
   version: Version;
-  metadata?: Record<number, Object>; // FIXME
+  metadata?: Record<number, Object>;
   status: TxStatus;
   blockHeader?: BlockHeader;
 }
-
-export interface ContractHeaderItem {
-  results: ContractHeader;
-  links: { contract: ContractEndpoint };
+export interface ContractState extends ContractHeader {
+  initialContract: Contract;
+  currentContract?: Contract;
+  state?: State;
+  utxo?: ContractId;
+  txBody?: TextEnvelope;
 }
 
 declare const ContractsRange: unique symbol;
 
 type ContractsRange = string & { _opaque: typeof ContractsRange };
 
-interface IndexResponse<Response, Range> {
+// Pagination
+
+interface PaginatedResponse<Item, Range> {
   nextRange?: Range;
   prevRange?: Range;
-  items: Response[];
+  itemsWithinCurrentRange: Item[];
 }
 
-export type GetContractsResponse = IndexResponse<ContractHeaderItem, ContractsRange>;
+// Rest Model
+
+export type GetContractsResponse = PaginatedResponse<ContractHeaderLinked, ContractsRange>;
 
 export interface PostContractsRequest {
   contract: Contract;
@@ -123,14 +126,6 @@ interface TextEnvelope {
   cborHex: string;
 }
 
-interface ContractState extends ContractHeader {
-  initialContract: Contract;
-  currentContract?: Contract;
-  state?: State;
-  utxo?: TxOutRef;
-  txBody?: TextEnvelope;
-}
-
 type ISO8601 = string;
 
 export interface PostTransactionsRequest {
@@ -153,8 +148,8 @@ export interface TxHeader {
   utxo?: TxOutRef;
 }
 
-interface TxHeaderItem {
-  results: TxHeader;
+interface TxHeaderLinked {
+  header: TxHeader;
   links: { contract: TransactionEndpoint };
 }
 
@@ -166,15 +161,18 @@ declare const TransactionsRange: unique symbol;
 
 type TransactionsRange = string & { _opaque: typeof TransactionsRange };
 
-export type GetTransactionsResponse = IndexResponse<TxHeaderItem, TransactionsRange>;
+export type GetTransactionsResponse = PaginatedResponse<TxHeaderLinked, TransactionsRange>;
 
 export interface RestClientAPI {
   contracts: {
-    get: (route: ContractsEndpoint, range?: ContractsRange) => Promise<Result<ErrorResponse, GetContractsResponse>>;
+    get: (
+      route: ContractsEndpoint,
+      range?: ContractsRange
+    ) => Promise<FetchResult<ErrorResponse, GetContractsResponse>>;
     post: (route: ContractsEndpoint, input: PostContractsRequest) => Promise<PostContractsResponse | ErrorResponse>;
   };
   contract: {
-    get: (route: ContractEndpoint) => Promise<Result<ErrorResponse, ContractState>>;
+    get: (route: ContractEndpoint) => Promise<FetchResult<ErrorResponse, ContractState>>;
     put: (route: ContractEndpoint, input: TextEnvelope) => Promise<TransactionsEndpoint | ErrorResponse>;
   };
   transactions: {
@@ -185,7 +183,7 @@ export interface RestClientAPI {
 export const RestClient = function (request: AxiosInstance): RestClientAPI {
   return {
     contract: {
-      get: async (route: ContractEndpoint): Promise<Result<ErrorResponse, ContractState>> =>
+      get: async (route: ContractEndpoint): Promise<FetchResult<ErrorResponse, ContractState>> =>
         request
           .get(route as string)
           .then((response) => success<ErrorResponse, ContractState>(response.data.resource))
@@ -200,14 +198,14 @@ export const RestClient = function (request: AxiosInstance): RestClientAPI {
       get: async (
         route: ContractsEndpoint,
         range?: ContractsRange
-      ): Promise<Result<ErrorResponse, GetContractsResponse>> => {
+      ): Promise<FetchResult<ErrorResponse, GetContractsResponse>> => {
         const config = range ? { headers: { Range: range as string } } : {};
 
         return request
           .get(route as string, config)
           .then((response) =>
             success<ErrorResponse, GetContractsResponse>({
-              items: response.data.results,
+              itemsWithinCurrentRange: response.data.results,
               nextRange: response.headers['next-range'] as ContractsRange,
               prevRange: response.headers['prev-range'] as ContractsRange
             })
